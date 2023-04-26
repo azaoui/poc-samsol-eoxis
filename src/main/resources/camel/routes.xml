@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes xmlns="http://camel.apache.org/schema/spring">
+
+    <route>
+        <from uri="file:{{uic559.xml.input.location}}?noop=true&amp;delete=true&amp;delay=500"/>
+        <!--<onException>-->
+            <!--<exception>java.lang.Exception</exception>-->
+            <!--<log message="Error processing file ${file:name}: ${exception.message}"/>-->
+            <!--<to uri="file:{{uic559.xml.output.location.ko}}"/>-->
+        <!--</onException>-->
+        <to uri="xslt:xslt-templates/uic559.xsl"/>
+        <choice>
+            <when>
+                <simple>${header.CamelExceptionCaught} == null</simple>
+                <to uri="file:{{uic559.xml.output.location.ok}}"/>
+            </when>
+            <otherwise>
+                <to uri="file:{{uic559.xml.output.location.ko}}"/>
+            </otherwise>
+        </choice>
+        <log message="File ${file:name} moved from ${header.CamelFilePath} to ${header.CamelDestinationPath}"/>
+    </route>
+</routes>
